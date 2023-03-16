@@ -19,7 +19,7 @@ go build
 To run sequencer:
 
 ```
-osc-sq -b 120 -p 10000
+osc-sq -b 120 -m 4 -p 10000
 ```
 
 ### Arguments
