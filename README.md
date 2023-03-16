@@ -23,5 +23,6 @@ osc-sq -b 120 -p 10000
 ```
 
 ### Arguments
-- `-b` for BPM
 - `-p` for port on localhost
+- `-b` for BPM
+- `-m` beats per bar

@@ -9,15 +9,17 @@ import (
 )
 
 func main() {
-
-	delay := flag.Int("b", 110, "beats per minute")
-	flag.Parse()
+        mod := flag.Int("m", 4, "beats per bar")
+	bpm := flag.Int("b", 110, "beats per minute")
+	port := flag.Int("p", 10000, "port to send OSC messages")
+	
+        flag.Parse()
 
 	start := time.Now()
 
 	beatNo := 0
 
-        client := osc.NewClient("localhost", 10000)
+        client := osc.NewClient("localhost", *port)
 
 	for {
 		t := time.Now()
@@ -37,8 +39,8 @@ func main() {
       client.Send(msg)
     }(beatNo)
 		beatNo = beatNo + 1
-		beatNo = beatNo % 4
-		time.Sleep(time.Duration(60000 / *delay) * time.Millisecond)
+		beatNo = beatNo % *mod
+		time.Sleep(time.Duration(60000 / *bpm) * time.Millisecond)
 	}
 
 }
