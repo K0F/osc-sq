@@ -19,7 +19,8 @@ func main() {
 
 	beatNo := 0
 
-        client := osc.NewClient("localhost", *port)
+        client := osc.NewClient("127.0.0.1", *port)
+        client2 := osc.NewClient("127.0.0.1", *port+1)
 
 	for {
 		t := time.Now()
@@ -37,6 +38,7 @@ func main() {
       msg := osc.NewMessage("/osc/timer")
       msg.Append(int32(value))
       client.Send(msg)
+      client2.Send(msg)
     }(beatNo)
 		beatNo = beatNo + 1
 		beatNo = beatNo % *mod
