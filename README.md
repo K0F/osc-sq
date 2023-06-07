@@ -1,5 +1,5 @@
 # osc-sq
-Tiny osc sequencer.
+Tiny OSC sequencer with stable precision around 1ms.
 
 [![Go](https://github.com/K0F/osc-sq/actions/workflows/go.yml/badge.svg)](https://github.com/K0F/osc-sq/actions/workflows/go.yml)
 
