@@ -11,7 +11,7 @@ import (
 
 func main() {
 	mod := flag.Int("m", 4, "beats per bar")
-	bpm := flag.Int("b", 110, "beats per minute")
+	bpm := flag.Float64("b", 110.0, "beats per minute")
 	port := flag.Int("p", 10000, "port to send OSC messages")
 
 	flag.Parse()
@@ -35,14 +35,16 @@ func main() {
 		drift = time.Duration(elapsed.Milliseconds()%dur.Milliseconds()) * time.Millisecond
 
 		if beatNo == 0 {
-			color.Green("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
+			color.Green("No.: %04d Nth Beat: %04d Time elapsed: %v\n", totalNo, beatNo, elapsed)
 
 		} else {
-			fmt.Printf("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
+			fmt.Printf("No.: %04d Nth Beat: %04d Time elapsed: %v\n", totalNo, beatNo, elapsed)
 		}
 
 		msg := osc.NewMessage("/osc/timer")
 		msg.Append(int32(beatNo))
+		msg.Append(int32(totalNo))
+		msg.Append(int32(*bpm))
 		client.Send(msg)
 		client2.Send(msg)
 
