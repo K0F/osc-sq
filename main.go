@@ -3,47 +3,59 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/fatih/color"
-        "github.com/crgimenes/go-osc"
 	"time"
+
+	"github.com/crgimenes/go-osc"
+	"github.com/fatih/color"
 )
 
 func main() {
-        mod := flag.Int("m", 4, "beats per bar")
+	mod := flag.Int("m", 4, "beats per bar")
 	bpm := flag.Int("b", 110, "beats per minute")
 	port := flag.Int("p", 10000, "port to send OSC messages")
-	
-        flag.Parse()
+
+	flag.Parse()
 
 	start := time.Now()
 
-	beatNo := 0
+	beatNo, totalNo := 0, 0
 
-        client := osc.NewClient("127.0.0.1", *port)
-        client2 := osc.NewClient("127.0.0.1", *port+1)
+	client := osc.NewClient("127.0.0.1", *port)
+	client2 := osc.NewClient("127.0.0.1", *port+1)
+
+	dur := time.Duration(60000 / *bpm) * time.Millisecond
+	var drift time.Duration
 
 	for {
-		t := time.Now()
-		elapsed := t.Sub(start)
+		go func() {
 
-		if beatNo == 0 {
-			color.Green("%v beat: %s \n", beatNo, elapsed)
+			t := time.Now()
+			elapsed := t.Sub(start)
 
-		} else {
-			fmt.Printf("%v beat: %s \n", beatNo, elapsed)
-		}
+			// time.Sleep() is slightly drifting over time, correction needed here
+			drift = time.Duration(elapsed.Milliseconds()%dur.Milliseconds()) * time.Millisecond
 
+			if beatNo == 0 {
+				color.Green("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
 
-    go func(value int){
-      msg := osc.NewMessage("/osc/timer")
-      msg.Append(int32(value))
-      client.Send(msg)
-      client2.Send(msg)
-    }(beatNo)
-		beatNo = beatNo + 1
-		beatNo = beatNo % *mod
-		time.Sleep(time.Duration(60000 / *bpm) * time.Millisecond)
+			} else {
+				fmt.Printf("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
+			}
+
+			msg := osc.NewMessage("/osc/timer")
+			msg.Append(int32(beatNo))
+			client.Send(msg)
+			client2.Send(msg)
+
+			totalNo = totalNo + 1
+			beatNo = beatNo + 1
+			beatNo = beatNo % *mod
+
+		}()
+
+		// calculate drift correction
+		ms := time.Duration(dur.Milliseconds()-(drift.Milliseconds())) * time.Millisecond
+		time.Sleep(ms)
 	}
 
 }
-
