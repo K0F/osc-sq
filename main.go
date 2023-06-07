@@ -27,34 +27,31 @@ func main() {
 	var drift time.Duration
 
 	for {
-		go func() {
 
-			t := time.Now()
-			elapsed := t.Sub(start)
+		t := time.Now()
+		elapsed := t.Sub(start)
 
-			// time.Sleep() is slightly drifting over time, correction needed here
-			drift = time.Duration(elapsed.Milliseconds()%dur.Milliseconds()) * time.Millisecond
+		// time.Sleep() is slightly drifting over time, correction needed here
+		drift = time.Duration(elapsed.Milliseconds()%dur.Milliseconds()) * time.Millisecond
 
-			if beatNo == 0 {
-				color.Green("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
+		if beatNo == 0 {
+			color.Green("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
 
-			} else {
-				fmt.Printf("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
-			}
+		} else {
+			fmt.Printf("%v beat: %v drift: %v \n", beatNo, elapsed, drift)
+		}
 
-			msg := osc.NewMessage("/osc/timer")
-			msg.Append(int32(beatNo))
-			client.Send(msg)
-			client2.Send(msg)
+		msg := osc.NewMessage("/osc/timer")
+		msg.Append(int32(beatNo))
+		client.Send(msg)
+		client2.Send(msg)
 
-			totalNo = totalNo + 1
-			beatNo = beatNo + 1
-			beatNo = beatNo % *mod
-
-		}()
+		totalNo = totalNo + 1
+		beatNo = beatNo + 1
+		beatNo = beatNo % *mod
 
 		// calculate drift correction
-		ms := time.Duration(dur.Milliseconds()-(drift.Milliseconds())) * time.Millisecond
+		ms := time.Duration(dur.Milliseconds()-drift.Milliseconds()) * time.Millisecond
 		time.Sleep(ms)
 	}
 
