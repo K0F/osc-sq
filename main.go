@@ -51,7 +51,7 @@ func main() {
 		totalNo = totalNo + 1
 		beatNo = beatNo + 1
 
-		if beatNo > *mod {
+		if beatNo >= *mod {
 			beatNo = 0
 			barNo = barNo + 1
 		}
