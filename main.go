@@ -18,7 +18,7 @@ func main() {
 
 	start := time.Now()
 
-	beatNo, totalNo := 0, 0
+	beatNo, barNo, totalNo := 0, 0, 0
 
 	client := osc.NewClient("127.0.0.1", *port)
 	client2 := osc.NewClient("127.0.0.1", *port+1)
@@ -35,10 +35,10 @@ func main() {
 		drift = time.Duration(elapsed.Milliseconds()%dur.Milliseconds()) * time.Millisecond
 
 		if beatNo == 0 {
-			color.Green("No.: %04d Nth Beat: %04d Time elapsed: %v\n", totalNo, beatNo, elapsed)
+			color.Green("%04d %04d %04d T %v\n", totalNo, barNo, beatNo, elapsed.Round(time.Duration(1*time.Millisecond)))
 
 		} else {
-			fmt.Printf("No.: %04d Nth Beat: %04d Time elapsed: %v\n", totalNo, beatNo, elapsed)
+			fmt.Printf("%04d %04d %04d T %v\n", totalNo, barNo, beatNo, elapsed.Round(time.Duration(1*time.Millisecond)))
 		}
 
 		msg := osc.NewMessage("/osc/timer")
@@ -50,7 +50,11 @@ func main() {
 
 		totalNo = totalNo + 1
 		beatNo = beatNo + 1
-		beatNo = beatNo % *mod
+
+		if beatNo > *mod {
+			beatNo = 0
+			barNo = barNo + 1
+		}
 
 		// calculate drift correction
 		ms := time.Duration(dur.Milliseconds()-drift.Milliseconds()) * time.Millisecond
