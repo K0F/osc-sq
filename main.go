@@ -27,7 +27,6 @@ func main() {
 	var drift time.Duration
 
 	for {
-
 		t := time.Now()
 		elapsed := t.Sub(start)
 
@@ -35,10 +34,10 @@ func main() {
 		drift = time.Duration(elapsed.Milliseconds()%dur.Milliseconds()) * time.Millisecond
 
 		if beatNo == 0 {
-			color.Green("%04d %04d %04d T %v\n", totalNo, barNo, beatNo, elapsed.Round(time.Duration(1*time.Millisecond)))
+			color.Green("%04d %04d %08d T %v\n", barNo, beatNo, totalNo, elapsed.Round(time.Duration(1*time.Millisecond)))
 
 		} else {
-			fmt.Printf("%04d %04d %04d T %v\n", totalNo, barNo, beatNo, elapsed.Round(time.Duration(1*time.Millisecond)))
+			fmt.Printf("%04d %04d %08d T %v\n", barNo, beatNo, totalNo, elapsed.Round(time.Duration(1*time.Millisecond)))
 		}
 
 		msg := osc.NewMessage("/osc/timer")
