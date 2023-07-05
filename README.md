@@ -3,6 +3,7 @@ Tiny OSC sequencer with stable precision around 1ms.
 
 [![Go](https://github.com/K0F/osc-sq/actions/workflows/go.yml/badge.svg)](https://github.com/K0F/osc-sq/actions/workflows/go.yml)
 
+[![asciicast](https://asciinema.org/a/594839.svg)](https://asciinema.org/a/594839)
 
 ## build it
 To build package, run simply:
